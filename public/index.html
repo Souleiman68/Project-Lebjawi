@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR-Assistant — Lebjawi Tech</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#006233;--green-d:#004d29;--yellow:#FFD100;--red:#D21034;--bg:#f6f8fa;--card:#ffffff;--text:#1e293b;--text-soft:#64748b;--border:#e2e8f0;--bubble-bot:#f1f5f9;--quick-bg:#f9fbfd;}
+body.dark{--bg:#0f1117;--card:#1a1f2e;--text:#e5e7eb;--text-soft:#9ca3af;--border:#2d3348;--bubble-bot:#252b3b;--quick-bg:#161b27;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.flag{height:6px;display:flex;}
+.flag div:nth-child(1){flex:3;background:var(--green);}
+.flag div:nth-child(2){flex:1;background:var(--yellow);}
+.flag div:nth-child(3){flex:1;background:var(--red);}
+header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;}
+.logo{display:flex;align-items:center;gap:12px;}
+.seal{width:48px;height:48px;flex-shrink:0;}
+.gov{color:var(--green);font-weight:600;font-size:1.1rem;}
+body.dark .gov{color:#4ade80;}
+.gov small{display:block;font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--text-soft);font-weight:400;font-size:0.8rem;direction:rtl;}
+.theme-toggle{display:flex;gap:6px;}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--card);color:var(--text);transition:all .15s;}
+.theme-btn:hover{border-color:var(--green);}
+.theme-btn.active{background:var(--green);color:white;border-color:var(--green);}
+.title-bar{background:var(--green);padding:12px 20px;text-align:center;}
+.title-bar h1{color:var(--yellow);font-size:1.05rem;font-weight:600;}
+.title-bar span{color:rgba(255,255,255,.7);font-size:.8rem;display:block;margin-top:2px;font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;}
+.main{flex:1;display:flex;justify-content:center;padding:20px;}
+.chatbox{width:820px;max-width:100%;background:var(--card);border:1px solid var(--border);border-radius:24px;box-shadow:0 20px 40px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden;}
+.chat-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--card);}
+.chat-header h2{display:flex;align-items:center;gap:8px;font-weight:600;}
+.chat-header h2 i{color:var(--green);}
+.badge{background:#e6f0ea;color:var(--green);padding:4px 12px;border-radius:30px;font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:5px;}
+body.dark .badge{background:#14532d;color:#4ade80;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:bl 2s ease-in-out infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
+.chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;min-height:320px;max-height:440px;}
+.chat::-webkit-scrollbar{width:4px;}
+.chat::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.message{display:flex;align-items:flex-start;gap:10px;max-width:82%;animation:rise .2s ease;}
+@keyframes rise{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.message.user{align-self:flex-end;flex-direction:row-reverse;}
+.message.bot{align-self:flex-start;}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.user .avatar{background:var(--green);color:white;}
+.bot .avatar{background:#edf2f7;color:#1e293b;border:1px solid #d0d9e4;}
+.bubble{padding:10px 16px;border-radius:18px;font-size:.95rem;line-height:1.65;}
+.user .bubble{background:var(--green);color:white;border-bottom-right-radius:4px;}
+.bot .bubble{background:var(--bubble-bot);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text);}
+.card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:12px;padding:14px 16px;box-shadow:0 4px 12px rgba(0,0,0,.04);font-size:.9rem;line-height:1.75;color:var(--text);}
+.card .title{font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;color:var(--green);}
+.card .body.ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;}
+
+/* ── SUGGESTIONS ── */
+.suggestions-wrap{padding:10px 20px 6px;background:var(--quick-bg);border-top:1px solid var(--border);}
+.suggestions-label{font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;}
+.suggestions-row{display:flex;gap:7px;flex-wrap:wrap;}
+.sug{display:flex;align-items:center;gap:6px;padding:6px 13px;border:1px solid var(--border);border-radius:20px;background:var(--card);color:var(--text);font-family:'Inter',sans-serif;font-size:12.5px;cursor:pointer;transition:.12s;white-space:nowrap;}
+.sug:hover{border-color:var(--green);color:var(--green);background:var(--card);}
+.sug i{font-size:12px;color:var(--green);}
+.sug.ar{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;}
+
+.input{border-top:1px solid var(--border);padding:12px 20px;background:var(--quick-bg);}
+.input-row{display:flex;gap:10px;background:var(--card);border-radius:60px;padding:6px 6px 6px 20px;border:1px solid var(--border);}
+textarea{flex:1;border:none;background:transparent;resize:none;padding:10px 0;font-size:1rem;outline:none;max-height:120px;color:var(--text);}
+textarea::placeholder{color:var(--text-soft);}
+.send{background:var(--green);border:none;color:white;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:background .15s;flex-shrink:0;}
+.send:hover{background:var(--green-d);}
+.send:disabled{opacity:.4;pointer-events:none;}
+footer{background:var(--green);color:white;text-align:center;padding:8px;font-size:.8rem;}
+footer a{color:var(--yellow);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="flag"><div></div><div></div><div></div></div>
+
+<header>
+  <div class="logo">
+    <img src="https://www.diplomatie.gov.mr/sites/default/files/inline-images/logo-footer.png" 
+       alt="Logo République Islamique de Mauritanie" 
+       style="height:48px; width:auto;">
+    <div class="gov">
+      Mauritania Citizen Assistant
+      <small>الجمهورية الإسلامية الموريتانية</small>
+    </div>
+  </div>
+  <div class="theme-toggle">
+    <button class="theme-btn active" id="btn-light" onclick="setTheme('light')">☀️</button>
+    <button class="theme-btn" id="btn-dark" onclick="setTheme('dark')">🌙</button>
+  </div>
+</header>
+
+<div class="title-bar">
+  <h1><i class="fas fa-code"></i> Full-Stack Developer Internship Challenge</h1>
+  <span>تحدي تطوير المطور المتكامل — Lebjawi Tech 2026</span>
+</div>
+
+<div class="main">
+  <div class="chatbox">
+    <div class="chat-header">
+      <h2><i class="fas fa-robot"></i> MR-Assistant</h2>
+      <div class="badge"><div class="live-dot"></div> AI · OSINT · Live</div>
+    </div>
+
+    <div class="chat" id="chat"></div>
+
+    <!-- Smart suggestions -->
+    <div class="suggestions-wrap">
+      <div class="suggestions-label">Try asking</div>
+      <div class="suggestions-row">
+        <button class="sug" onclick="ask('What is the price of gasoline in Nouakchott?')">
+          <i class="fas fa-gas-pump"></i> Market prices
+        </button>
+        <button class="sug" onclick="ask('When is the Baccalauréat exam in Mauritania?')">
+          <i class="fas fa-graduation-cap"></i> BAC exam dates
+        </button>
+        <button class="sug" onclick="ask('Hospitals in Nouakchott')">
+          <i class="fas fa-hospital"></i> Hospitals
+        </button>
+        <button class="sug" onclick="ask('What are the banking apps in Mauritania?')">
+          <i class="fas fa-mobile-alt"></i> Banking apps
+        </button>
+        <button class="sug" onclick="ask('How to get a passport in Mauritania?')">
+          <i class="fas fa-passport"></i> Get a passport
+        </button>
+        <button class="sug ar" onclick="ask('كم سعر لتر الغازوال اليوم؟')">
+          <i class="fas fa-gas-pump"></i> سعر الغازوال
+        </button>
+        <button class="sug ar" onclick="ask('ما هي أرقام الطوارئ في موريتانيا؟')">
+          <i class="fas fa-phone"></i> أرقام الطوارئ
+        </button>
+        <button class="sug ar" onclick="ask('كيف أحصل على شهادة الميلاد؟')">
+          <i class="fas fa-id-card"></i> شهادة الميلاد
+        </button>
+        <button class="sug ar" onclick="ask('ما هي الجامعات في موريتانيا؟')">
+          <i class="fas fa-university"></i> الجامعات
+        </button>
+        <button class="sug ar" onclick="ask('متى امتحان الباكالوريا في موريتانيا؟')">
+          <i class="fas fa-graduation-cap"></i> موعد الباكالوريا
+        </button>
+        <button class="sug ar" onclick="ask('كيف أفتح شركة في موريتانيا؟')">
+          <i class="fas fa-briefcase"></i> تأسيس شركة
+        </button>
+        <button class="sug ar" onclick="ask('ما هي الصيدليات المفتوحة ليلاً؟')">
+          <i class="fas fa-pills"></i> صيدليات ليلية
+        </button>
+      </div>
+    </div>
+
+    <div class="input">
+      <div class="input-row">
+        <textarea id="msg" rows="1" placeholder="Ask a question / اكتب سؤالك..."></textarea>
+        <button class="send" id="sendBtn" onclick="send()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Assistant for Mauritanian citizens — <a href="https://lebjawi.com" target="_blank">Lebjawi Tech</a>
+</footer>
+
+<script>
+  const sessionId = 'sess_' + Math.random().toString(36).slice(2, 9);
+  const chat    = document.getElementById('chat');
+  const msgInp  = document.getElementById('msg');
+  const sendBtn = document.getElementById('sendBtn');
+
+  function setTheme(t) {
+    document.body.classList.toggle('dark', t === 'dark');
+    document.getElementById('btn-light').classList.toggle('active', t === 'light');
+    document.getElementById('btn-dark').classList.toggle('active',  t === 'dark');
+  }
+
+  msgInp.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+  });
+  msgInp.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+  });
+
+  function isArabic(text) {
+    return /[\u0600-\u06FF]/.test(text.slice(0, 40));
+  }
+
+  window.addEventListener('load', function() {
+    addBotCard(
+      '👋 Welcome / مرحباً',
+      'Ask me anything about Mauritania: hospitals, prices, universities, banking apps, emergency numbers, and more.\nاسألني عن أي شيء في موريتانيا: المستشفيات، الأسعار، الجامعات، تطبيقات البنوك، أرقام الطوارئ، والمزيد.'
+    );
+  });
+
+  function ask(q) {
+    msgInp.value = q;
+    send();
+  }
+
+  function addUser(text) {
+    const d = document.createElement('div');
+    d.className = 'message user';
+    d.innerHTML = `<div class="avatar"><i class="fas fa-user"></i></div><div class="bubble">${text}</div>`;
+    chat.appendChild(d);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function addBotCard(title, content) {
+    const ar = isArabic(content);
+    const d = document.createElement('div');
+    d.className = 'message bot';
+    d.innerHTML = `
+      <div class="avatar"><i class="fas fa-robot"></i></div>
+      <div class="card">
+        <div class="title"><i class="fas fa-info-circle"></i> ${title}</div>
+        <div class="body ${ar ? 'ar' : ''}">${content.replace(/\n/g, '<br>')}</div>
+      </div>`;
+    chat.appendChild(d);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function showTyping() {
+    const d = document.createElement('div');
+    d.id = 'typing'; d.className = 'message bot';
+    d.innerHTML = `<div class="avatar"><i class="fas fa-robot"></i></div><div class="bubble"><i class="fas fa-circle-notch fa-spin"></i> Thinking...</div>`;
+    chat.appendChild(d);
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function rmTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  async function send() {
+    const text = msgInp.value.trim();
+    if (!text || sendBtn.disabled) return;
+    addUser(text);
+    msgInp.value = ''; msgInp.style.height = 'auto';
+    sendBtn.disabled = true; showTyping();
+    try {
+      const res = await fetch('/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, sessionId })
+      });
+      const data = await res.json();
+      rmTyping();
+      addBotCard('ℹ️ MR-Assistant', data.reply || data.error || 'Something went wrong.');
+    } catch (err) {
+      rmTyping();
+      addBotCard('⚠️ Connection error', 'Cannot reach the server.\nMake sure the backend is running: npm run dev');
+    } finally {
+      sendBtn.disabled = false; msgInp.focus();
+    }
+  }
+</script>
+</body>
+</html>
