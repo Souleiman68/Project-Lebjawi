@@ -136,8 +136,8 @@ mr-assistant/
 ## Run Locally
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/mr-assistant
-cd mr-assistant
+git clone https://github.com/Souleiman68/Project-Lebjawi
+cd Project-Lebjawi
 npm install
 
 # Create .env
